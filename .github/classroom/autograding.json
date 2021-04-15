@@ -8,17 +8,17 @@
       "output": "",
       "comparison": "included",
       "timeout": 10,
-      "points": null
+      "points": 10
     },
     {
-      "name": "Run ctest",
+      "name": "Tests",
       "setup": "",
       "run": ".scripts/dr.sh \"cd build; ctest -N; ctest --output-on-failure\"",
       "input": "",
       "output": "",
       "comparison": "included",
       "timeout": 10,
-      "points": null
+      "points": 10
     }
   ]
 }
