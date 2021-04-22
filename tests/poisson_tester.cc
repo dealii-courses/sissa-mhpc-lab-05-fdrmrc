@@ -163,7 +163,7 @@ TEST_F(Poisson2DTester, TestLinearWithHangingNode)
     << "  set Neumann boundary ids                    = " << std::endl
     << "  set Number of global refinements            = 4" << std::endl
     << "  set Number of refinement cycles             = 1" << std::endl
-    << "  set Output filename                         = linear_with_hanging"
+    << "  set Output filename                         = linear_with_hanging_node"
     << std::endl
     << "  set Problem constants                       = pi : 3.14" << std::endl
     << "end" << std::endl;
@@ -186,6 +186,45 @@ TEST_F(Poisson2DTester, TestLinearWithHangingNode)
   assemble_system();
   solve();
   output_results(0);
+  auto tmp = solution;
+  VectorTools::interpolate(dof_handler, dirichlet_boundary_condition, tmp);
+  tmp -= solution;
+  ASSERT_NEAR(tmp.l2_norm(), 0, 1e-10); // I want to be sure that
+}
+
+TEST_F(Poisson2DTester, TestQuadratic_pre_refinement)
+{
+  std::stringstream str;
+  str
+    << "  subsection Poisson<2>" << std::endl
+    << "  set Dirichlet boundary condition expression = x^2" << std::endl
+    << "  set Dirichlet boundary ids                  = 0" << std::endl
+    << "  set Finite element degree                   = 2" << std::endl
+    << "  set Forcing term expression                 = -2 " << std::endl
+    << "  set Grid generator arguments                = 0: 1: false" // false:
+                                                                     // hypercube
+                                                                     // with 0
+                                                                     // b. cons
+                                                                     // only
+    << std::endl
+    << "  set Grid generator function                 = hyper_cube" << std::endl
+    << "  set Local pre refinement grid size expression = 0" << std::endl
+    << "  set Neumann boundary condition expression   = 0" << std::endl
+    << "  set Neumann boundary ids                    = " << std::endl
+    << "  set Number of global refinements            = 4" << std::endl
+    << "  set Number of refinement cycles             = 1" << std::endl
+    << "  set Output filename                         = pre_refinement_quadratic"
+    << std::endl
+    << "  set Problem constants                       = pi : 3.14" << std::endl
+    << "end" << std::endl;
+
+  parse_string(str.str());
+  make_grid();
+  setup_system();
+  assemble_system();
+  solve();
+  output_results(0);
+
   auto tmp = solution;
   VectorTools::interpolate(dof_handler, dirichlet_boundary_condition, tmp);
   tmp -= solution;
